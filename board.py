@@ -1,4 +1,9 @@
 import machine
+import ubinascii
+
+########################################
+# Wemos D1 Mini (ESP8266) board
+########################################
 
 D0 = 16  # WAKE
 D1 = 5
@@ -14,6 +19,7 @@ D8 = 15
 # I2C, SPI, UART2 in Dx pins
 
 led = machine.Pin(2, machine.Pin.OUT)
+device_id = ubinascii.hexlify(machine.unique_id()).decode() # hex string
 
 
 def deep_sleep(secs: int):

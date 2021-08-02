@@ -9,8 +9,12 @@ import config
 import wifi
 
 from scales import scales
-from mqtt import client
+from mqtt import client, topic
 
+# power save:
+# * LED blink
+# * prints
+# * sleeps
 
 def main():
     try:
@@ -27,7 +31,7 @@ def main():
         weight = scales.stable_value()
         scales.power_off()
         print("weight", weight)
-        client.publish(config.mqtt_topic("weight"), bytes(str(weight), 'utf-8'))
+        client.publish(topic("weight"), bytes(str(weight), 'utf-8'))
     except Exception as e:
         sys.print_exception(e)
     finally:
@@ -37,7 +41,7 @@ def main():
             pass
     board.led.value(0)
     if 1:
-        print("Sleep in 5 seconds...")
+        print("Deep sleep for 20 seconds in 5 seconds...")
         sleep(5)
         board.deep_sleep(20)
     else:

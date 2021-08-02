@@ -1,12 +1,17 @@
 import sys
 import machine
 import utime
+import board
 import config
 import wifi
 from umqtt.simple import MQTTClient
 
+# MQTT: topic and payload must be bytes
 
-client = MQTTClient(config.mqtt_client_id, config.mqtt_address, config.mqtt_port, config.mqtt_username, config.mqtt_password)
+def topic(t):
+    return bytes("%s/%s" % (board.device_id, t), "utf-8")
+
+client = MQTTClient(board.device_id, config.mqtt_address, config.mqtt_port, config.mqtt_username, config.mqtt_password)
 
 
 def main():
@@ -19,7 +24,7 @@ def main():
             print("sleep 1")
             utime.sleep(1)
             print("publish")
-            client.publish(config.mqtt_topic("test"), bytes("hello world", 'utf-8'))
+            client.publish(topic("test"), bytes("hello world", 'utf-8'))
     except KeyboardInterrupt:
         try:
             client.disconnect()
