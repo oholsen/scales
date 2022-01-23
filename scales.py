@@ -1,7 +1,7 @@
 # https://github.com/SergeyPiskunov/micropython-hx711
 
 from hx711 import HX711
-from utime import sleep, sleep_us
+from utime import sleep
 from board import led, D5, D6
 
 
@@ -10,10 +10,6 @@ class Scales(HX711):
         super(Scales, self).__init__(d_out, pd_sck, channel=HX711.CHANNEL_A_64)
         self.offset = 0
 
-    def reset(self):
-        self.power_off()
-        self.power_on()
-
     def tare(self):
         self.offset = self.stable_value()
 
@@ -21,10 +17,8 @@ class Scales(HX711):
         return self.read() - self.offset
 
     def stable_value(self, reads=10, delay_us=500):
-        values = []
-        for _ in range(reads):
-            values.append(self.raw_value())
-            sleep_us(delay_us)
+        values = self.read_multiple(reads, delay_us)
+        values = [v - self.offset for v in values]
         return self._stabilizer(values)
 
     @staticmethod

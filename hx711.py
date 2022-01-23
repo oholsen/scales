@@ -131,6 +131,10 @@ class HX711(object):
         self.pd_sck_pin.value(0)
         self.channel = self._channel
 
+    def reset(self):
+        self.power_off()
+        self.power_on()
+
     def read_raw(self):
         """
         Read current value for current channel with current gain.
@@ -153,3 +157,10 @@ class HX711(object):
     def read(self):
         raw_data = self.read_raw()
         return self._convert_from_twos_complement(raw_data)
+
+    def read_multiple(self, reads=10, delay_us=500):
+        values = []
+        for _ in range(reads):
+            values.append(self.read())
+            sleep_us(delay_us)
+        return values
